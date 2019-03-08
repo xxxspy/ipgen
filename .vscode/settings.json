@@ -1,0 +1,5 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.pythonPath": "D:\\mysites\\datascience-bot\\.env\\Scripts",
+    "python.venvPath": "D:\\\\mysites\\\\datascience-bot\\\\.env"
+}
