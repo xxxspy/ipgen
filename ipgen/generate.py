@@ -48,10 +48,9 @@ def expand_city(cityname):
         raise ValueError('No cached ip in city {}'.format(cityname))
     if ips:
         for info in ips:
-            ip = IP.from_str(info['query'])
+            ip = IP.from_str(info[0])
             for subip in ip.expand():
-                ip.info
-                ip.save()
+                subip.save(fetch=True)
             
             
 def random_city_ips(city, num):
