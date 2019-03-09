@@ -33,10 +33,13 @@ class Test(unittest.TestCase):
     #     r=cache.select(regionName='河北')
     #     print(r)
 
-    def test_city_ips(self):
-        citi = '石家庄'
-        r = generate.random_city_ips(citi, 10)
-        print(r)
+    def text_expand_city(self):
+        generate.expand_city('石家庄')
+
+    # def test_city_ips(self):
+    #     citi = '石家庄'
+    #     r = generate.random_city_ips(citi, 10)
+    #     print(r)
 
 
 

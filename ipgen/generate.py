@@ -64,6 +64,15 @@ def random_city_ips(city, num):
     return ips
 
 
+def random_pro_ips(pro, num):
+    ips = cache.select(regionName=pro, limit=num, rnd=True)
+    ips = cache.record2obj(ips)
+    while len(ips) < num:
+        expand_province(pro)
+        ips = cache.select(regionName=pro, limit=num, rnd=True)
+        ips = cache.record2obj(ips)
+    return ips
+
 
 def gen(num: int, region=None, city=None):
     '''
