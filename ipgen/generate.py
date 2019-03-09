@@ -5,6 +5,8 @@ from pyquery import PyQuery as pq
 import json
 import random
 import time
+from . import cache
+from .models import IP
 
 
 
@@ -24,14 +26,43 @@ def cache_citys():
             print('ip: ', ip)
             info = ip.info
             print(info)
+            ip.save()
             time.sleep(0.1)
 
 
+def expand_province(proname):
+    '''增加某个省的ip缓存'''
+    rngs = regions.get_ip_ranges(proname)
+    for start, end in rngs:
+        for i in range(10):
+            ip = start.rand_between(end)
+            print('ip: ', ip)
+            info = ip.info
+            print(info)
+            ip.save()
+            time.sleep(0.1)
 
+def expand_city(cityname):
+    ips = cache.select(city=cityname)
+    if len(ips) == 0:
+        raise ValueError('No cached ip in city {}'.format(cityname))
+    if ips:
+        for info in ips:
+            ip = IP.from_str(info['query'])
+            for subip in ip.expand():
+                ip.info
+                ip.save()
+            
+            
+def random_city_ips(city, num):
+    ips = cache.select(city=city, limit=num, rnd=True)
+    ips = cache.record2obj(ips)
+    while len(ips) < num:
+        expand_city(city)
+        ips = cache.select(city=city, limit=num)
+        ips = cache.record2obj(ips)
+    return ips
 
-
-def random_city_ip(region_name):
-    ip_rngs = regions.get_ip_ranges(region_name)
 
 
 def gen(num: int, region=None, city=None):
@@ -39,7 +70,7 @@ def gen(num: int, region=None, city=None):
     region: 省名称
     city: 城市名称
     '''
-    if region is None :
+    if region is None and city is None:
         region, short = random_region()
     if city is None:
         pass
