@@ -90,6 +90,7 @@ class IP:
     def info(self):
         if self._info is None:
             self._info = self.fetch_info()
+        return self._info
 
     def fetch_info(self)->dict:
         info = cache.get(str(self))
@@ -98,14 +99,15 @@ class IP:
                 self)
             print(url)
             r = requests.get(url)
-            print(r.text)
             return r.json()
         else:
             return info
 
-    def save(self):
+    def save(self, fetch=False):
         if self._info is not None:
             cache.insertone(self._info)
+        elif fetch:
+            cache.insertone(self.info)
 
     def __del__(self):
         self.save()
@@ -117,3 +119,13 @@ class IP:
         i4 = random.randint(min(self.ip4, ip.ip4), max(self.ip4, ip.ip4))
         ip = IP(i1, i2, i3, i4)
         return ip
+
+    def expand(self, num=10):
+        start = IP(self.ip1, self.ip2, 0, 0)
+        end = IP(self.ip1, self.ip2, 255, 255)
+        rtn = []
+        while len(rtn) < num:
+            ip = start.rand_between(end)
+            if ip != self and ip not in rtn:
+                rtn.append(ip)
+        return rtn

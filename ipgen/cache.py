@@ -2,10 +2,6 @@
 import sqlite3
 from . import paths
 
-'''
-{"code":0,"data":{"ip":"1.85.189.240","country":"中国","area":"","region":"陕西","city":"西安","county":"XX",
-"isp":"电信","country_id":"CN","area_id":"","region_id":"610000","city_id":"610100","county_id":"xx","isp_id":"100017"}}
-'''
 
 
 KEYS = [
@@ -74,15 +70,18 @@ def insert(infos):
     cur = connect().cursor()
     try:
         for info in infos:
-            ips = info['ip'].split('.')
+            ips = info['query'].split('.')
             values = []
             for k in KEYS:
                 values.append(info[k])
+            values = ['"{}"'.format(v) for v in values]
             data = sql.format(','.join(values))
             cur.execute(data)
         cur.close()
         connect().commit()
-    except:
+    except :
+        raise
+        print('ERROR::::::::::::::::::')
         cur.close()
         connect().rollback()
 
@@ -107,14 +106,44 @@ def get(ip: str):
     return info
 
 
-def select(**conditions):
+def select(limit = None, rnd=False,**conditions):
     cons = []
     for key, value in conditions.items():
         cons.append('{}="{}"'.format(key, value))
-    sql = 'select {} from ips where {};'.format(
-        ','.join(KEYS, ' and '.join(cons)))
+    sql = 'select {} from ips where {}'.format(
+        ','.join(KEYS), ' and '.join(cons))
+    if rnd:
+        sql += ' ORDER BY RANDOM()'
+    if limit is not None:
+        sql += ' limit {}'.format(limit)
+    sql += ';'
     c = connect().cursor()
     c.execute(sql)
     res = c.fetchall()
     c.close()
     return res
+
+def record2dict(records):
+    dicts = []
+    for rec in records:
+        d = {}
+        for i, k in enumerate(KEYS):
+            d[k] = rec[i]
+        dicts.append(d)
+    return dicts
+
+
+def record2obj(records: list)->list:
+    from .models import IP
+    ips = []
+    for rd in record2dict(records):
+        ip = IP.from_str(rd['query'])
+        ip._info = rd
+        ips.append(ip)
+    return ips
+
+
+def add_ip(ip: str):
+    from .models import IP
+    ip = IP.from_str(ip)
+    ip.save(True)
