@@ -80,14 +80,22 @@ def random_pro_ips(pro, num):
     return ips
 
 
+def rand_ips(num):
+    ips = cache.select(limit=num, rnd=True)
+    ips = cache.record2obj(ips)
+    return ips
+
+
 def gen(num: int, region=None, city=None):
     '''
     region: 省名称
     city: 城市名称
     '''
     if region is None and city is None:
-        region, short = random_region()
+        return rand_ips(num)
     if city is None:
-        pass
+        return random_pro_ips(region, num)
+    else:
+        return random_city_ips(city, num)
 
     

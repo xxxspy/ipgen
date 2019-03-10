@@ -3,7 +3,6 @@ import sqlite3
 from . import paths
 
 
-
 KEYS = [
     "query",
     "status",
@@ -79,7 +78,7 @@ def insert(infos):
             cur.execute(data)
         cur.close()
         connect().commit()
-    except :
+    except:
         raise
         print('ERROR::::::::::::::::::')
         cur.close()
@@ -106,12 +105,17 @@ def get(ip: str):
     return info
 
 
-def select(limit = None, rnd=False,**conditions):
+def select(limit=None, rnd=False, **conditions):
     cons = []
     for key, value in conditions.items():
         cons.append('{}="{}"'.format(key, value))
-    sql = 'select {} from ips where {}'.format(
-        ','.join(KEYS), ' and '.join(cons))
+    if cons:
+        sql = 'select {} from ips where {}'.format(
+            ','.join(KEYS), ' and '.join(cons))
+    else:
+        sql = 'select {} from ips'.format(
+            ','.join(KEYS)
+        )
     if rnd:
         sql += ' ORDER BY RANDOM()'
     if limit is not None:
@@ -122,6 +126,7 @@ def select(limit = None, rnd=False,**conditions):
     res = c.fetchall()
     c.close()
     return res
+
 
 def record2dict(records):
     dicts = []
