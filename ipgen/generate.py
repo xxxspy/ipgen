@@ -51,6 +51,13 @@ def expand_city(cityname):
             ip = IP.from_str(info[0])
             for subip in ip.expand():
                 subip.save(fetch=True)
+
+def expand_ip_range(start: str, end: str, num=10):
+    ip1, ip2 = IP.from_str(start), IP.from_str(end)
+    for i in range(num):
+        ip = ip1.rand_between(ip2)
+        ip.save(True)
+        print(ip.info)
             
             
 def random_city_ips(city, num):
