@@ -24,6 +24,7 @@ def cache_citys():
             print('ip: ', ip)
             info = ip.info
             print(info)
+            ip.save()
             time.sleep(0.1)
 
 
