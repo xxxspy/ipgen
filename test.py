@@ -37,9 +37,7 @@ class Test(unittest.TestCase):
     #     generate.expand_city('沧州')
 
     def test_expand_range(self):
-        generate.expand_ip_range('1.184.128.0', '1.184.255.255')
-        generate.expand_ip_range('14.18.9.0', '14.18.63.255')
-        generate.expand_ip_range('14.23.0.0', '14.23.255.255')
+        generate.expand_ip_range('36.1.0.0', '36.1.46.255')
 
     # def test_city_ips(self):
     #     citi = '石家庄'
