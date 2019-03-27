@@ -98,4 +98,35 @@ def gen(num: int, region=None, city=None):
     else:
         return random_city_ips(city, num)
 
-    
+def fetch_range(n, pro, city=''):
+    if city:
+        url = 'http://ip.yqie.com/cn/{pro}/{city}/'.format(pro=pro, city=city)
+    else:
+        url = 'http://ip.yqie.com/cn/{pro}/'.format(pro=pro)
+    html = requests.get(url).text
+    q = pq(html)
+    trs = q.find('#GridViewOrder > tr')
+    ips = []
+    for tr in trs[1:]:
+        tds = pq(tr).find('td')
+        ips.append((pq(tds[1]).text(), pq(tds[2]).text()))
+    return random.sample(ips, n)
+
+
+def rand_fetch(n, pro, city=''):
+    '''从网页抓取IP'''
+    m = int(n/10)
+    if m > 20:
+        m = 20
+    elif m < 5:
+        m = 5
+    ip_segs = fetch_range(m, pro, city)
+    ips = []
+    while len(ips) < n:
+        for s, e in ip_segs:
+            ip = IP.from_str(s).rand_between(IP.from_str(e))
+            ips.append(ip)
+            if len(ips) >= n:
+                return ips
+    return ips
+
