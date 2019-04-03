@@ -33,21 +33,22 @@ class Test(unittest.TestCase):
     #     r=cache.select(regionName='河北')
     #     print(r)
 
-    # def test_expand_city(self):
-    #     generate.expand_city('沧州')
+    def test_expand_city(self):
+        generate.expand_city('南京')
 
     # def test_expand_range(self):
-    #     generate.expand_ip_range('14.21.32.0', '14.21.35.255')
-    #     generate.expand_ip_range('14.21.56.0', '14.21.59.255')
-    #     generate.expand_ip_range('14.26.192.0', '14.26.255.255')
-    #     generate.expand_ip_range('27.42.97.0', '27.42.127.255')
-    #     generate.expand_ip_range('49.239.192.0', '49.239.255.255')
+    #     for i in range(50):
+    #         generate.expand_ip_range('219.216.176.0', '219.216.176.255')
+        # generate.expand_ip_range('124.228.0,0', '124.228.255.255')
+        # generate.expand_ip_range('113.220.0.0', '113.223.255.255')
+        # generate.expand_ip_range('27.42.97.0', '27.42.127.255')
+        # generate.expand_ip_range('49.239.192.0', '49.239.255.255')
 
-    def test_fetch_range(self):
-        ips = generate.fetch_range(100, 'guangdong', 'zhuhai')
-        print(ips)
-        ips = generate.rand_fetch(100, 'guangdong', 'zhuhai')
-        print(ips)
+    # def test_fetch_range(self):
+    #     ips = generate.fetch_range(100, 'guangdong', 'zhuhai')
+    #     print(ips)
+    #     ips = generate.rand_fetch(100, 'guangdong', 'zhuhai')
+    #     print(ips)
 
     # def test_city_ips(self):
     #     citi = '石家庄'
