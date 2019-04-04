@@ -63,10 +63,13 @@ def expand_ip_range(start: str, end: str, num=10):
 def random_city_ips(city, num):
     ips = cache.select(city=city, limit=num, rnd=True)
     ips = cache.record2obj(ips)
-    while len(ips) < num:
+    while len(ips) < num or len(ips) < 99:
         expand_city(city)
         ips = cache.select(city=city, limit=num)
         ips = cache.record2obj(ips)
+    while len(ips) < num:
+        ips.append(random.choice(ips))
+        
     return ips
 
 
