@@ -33,8 +33,8 @@ class Test(unittest.TestCase):
     #     r=cache.select(regionName='河北')
     #     print(r)
 
-    def test_expand_city(self):
-        generate.expand_city('南京')
+    # def test_expand_city(self):
+    #     generate.expand_city('南京')
 
     # def test_expand_range(self):
     #     for i in range(50):
@@ -55,7 +55,13 @@ class Test(unittest.TestCase):
     #     r = generate.random_city_ips(citi, 10)
     #     print(r)
 
-
+    def test_gen(self):
+        ips = generate.gen(100, '河北省')
+        self.assertEqual(len(ips), 100)
+        ips = generate.gen(1000)
+        self.assertEqual(len(ips), 1000)
+        ips = generate.gen(1000, region='河北省', city='石家庄', n_pre_region=50)
+        self.assertEqual(1000, len(ips))
 
 
 

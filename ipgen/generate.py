@@ -7,6 +7,9 @@ import random
 import time
 from . import cache
 from .models import IP
+from .settings import PROS
+import hashlib
+import linecache
 
 
 
@@ -82,54 +85,85 @@ def random_pro_ips(pro, num):
         ips = cache.record2obj(ips)
     return ips
 
+def calcmd5(filepath):
+    with open(filepath,'rb') as f:
+        md5obj = hashlib.md5()
+        md5obj.update(f.read())
+        hash = md5obj.hexdigest()
+    return hash
 
-def rand_ips(num):
-    ips = cache.select(limit=num, rnd=True)
-    ips = cache.record2obj(ips)
-    return ips
 
+def load_points():
+    fpath = paths.pro_point_info
+    fileprint_cal = calcmd5(str(paths.ip_db))
+    if not fpath.exists():
+        points = {}
+        fileprint = ''
+    else:
+        with open(str(fpath), 'r', encoding='utf8') as fle:
+            content = fle.read()
+            if not content:
+                points = {}
+                fileprint = ''
+            else:
+                data = json.loads(content)
+                points = data['points']
+                fileprint = data['fileprint']
+    if not fileprint or fileprint != fileprint_cal:
+        f = open(str(paths.ip_db), 'r', encoding='utf8')
+        for pro in PROS:
+            f.seek(0)
+            i = -1
+            for line in f:
+                line = line.split('\t')
+                i += 1
+                if line[5].startswith(pro):
+                    points[pro] = i
+                    break
+        f.close()
+        f = open(str(fpath), 'w', encoding='utf8')
+        json.dump({'fileprint': fileprint_cal, 'points': points}, f)
+        f.close()
+    for pro in PROS:
+        if pro not in PROS:
+            raise ValueError('Not fond province {}'.format(pro))
+    return points
 
-def gen(num: int, region=None, city=None):
+    
+
+def gen(num: int, region='', city='', n_pre_region=5):
     '''
     region: 省名称
     city: 城市名称
     '''
-    if region is None and city is None:
-        return rand_ips(num)
-    if city is None:
-        return random_pro_ips(region, num)
-    else:
-        return random_city_ips(city, num)
-
-def fetch_range(n, pro, city=''):
-    if city:
-        url = 'http://ip.yqie.com/cn/{pro}/{city}/'.format(pro=pro, city=city)
-    else:
-        url = 'http://ip.yqie.com/cn/{pro}/'.format(pro=pro)
-    html = requests.get(url).text
-    q = pq(html)
-    trs = q.find('#GridViewOrder > tr')
+    if not city:
+        city = ''
     ips = []
-    for tr in trs[1:]:
-        tds = pq(tr).find('td')
-        ips.append((pq(tds[1]).text(), pq(tds[2]).text()))
-    return random.sample(ips, n)
-
-
-def rand_fetch(n, pro, city=''):
-    '''从网页抓取IP'''
-    m = int(n/10)
-    if m > 20:
-        m = 20
-    elif m < 5:
-        m = 5
-    ip_segs = fetch_range(m, pro, city)
-    ips = []
-    while len(ips) < n:
-        for s, e in ip_segs:
-            ip = IP.from_str(s).rand_between(IP.from_str(e))
-            ips.append(ip)
-            if len(ips) >= n:
-                return ips
+    count = 0
+    points = load_points()
+    while len(ips) < num:
+        count += 1
+        if count > 100000:
+            raise ValueError('Reach Loop max count!')
+        if not region:
+            pro = random.choice(PROS)
+        else:
+            pro = region
+        p = points[pro] + random.randint(1, 5)
+        found = False
+        # ID	StartIPNum	StartIPText	EndIPNum	EndIPText	Country	Local
+        while not found:
+            p += 1
+            line =  linecache.getline(str(paths.ip_db), p)
+            if pro in line and city in line:
+                info = line.split('\t')
+                if info[5].startswith(pro) and city in info[5]:
+                    break
+        start = IP.from_str(info[2])
+        end = IP.from_str(info[4])
+        cnt = 0
+        while len(ips) < num and cnt < n_pre_region:
+            ips.append(start.rand_between(end))
+            cnt += 1         
     return ips
-
+    
