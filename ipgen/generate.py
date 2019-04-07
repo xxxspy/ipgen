@@ -152,7 +152,11 @@ def gen(num: int, region='', city='', n_pre_region=5):
         p = points[pro] + random.randint(1, 5)
         found = False
         # ID	StartIPNum	StartIPText	EndIPNum	EndIPText	Country	Local
+        loop_cnt = 0
         while not found:
+            loop_cnt += 1
+            if loop_cnt >= 200000:
+                raise ValueError('Can not find ip in {} {}'.format(region, city))
             p += 1
             line =  linecache.getline(str(paths.ip_db), p)
             if pro in line and city in line:
