@@ -15,5 +15,6 @@ def info(ip):
 
 
 if __name__ == '__main__':
-    i = info('14.18.139.74')
-    print(i)
+    for i in range(200):
+        inf = info('14.18.139.{}'.format(i+1))
+        print(i, inf)
