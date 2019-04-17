@@ -64,6 +64,7 @@ class IP:
             self.ip3 = 0
             self.ip4 = 0
         self._info = None
+        return self
 
     def data(self):
         return [self.ip1, self.ip2, self.ip3, self.ip4]
@@ -112,7 +113,7 @@ class IP:
     def __del__(self):
         self.save()
 
-    def rand_between(self, ip: 'IP'):
+    def rand_between(self, ip: 'IP')->'IP':
         i1 = random.randint(min(self.ip1, ip.ip1), max(self.ip1, ip.ip1))
         i2 = random.randint(min(self.ip2, ip.ip2), max(self.ip2, ip.ip2))
         i3 = random.randint(min(self.ip3, ip.ip3), max(self.ip3, ip.ip3))
