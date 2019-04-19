@@ -162,18 +162,7 @@ def gen(num: int, region='', city='', n_pre_region=20):
         if info[0].startswith(pro) and city in info[0] and info[1]!=info[2] and info[1] not in filterd:
             start = IP.from_str(info[1])
             end = IP.from_str(info[2])
-            print(start, end)
-            cnt = 0
-            while (check.in_area(start, pro, city)) and len(ips) < num and cnt < n_pre_region:
-                new = start.rand_between(end)
-                _n = 0
-                while new in ips:
-                    _n += 1
-                    if _n >= 1000:
-                        raise ValueError('not enough ip in {}--{}'.format(start, end))
-                    new = start.rand_between(end)
-                ips.append(new)
-                cnt += 1
+            ips.extend(start.sample_between(end, n_pre_region))
     check.update_cached()
     return ips
     

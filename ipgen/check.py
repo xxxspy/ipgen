@@ -40,6 +40,7 @@ def info(ip):
     content = html.split('<', 1)[0]
     cached[ip] = content
     newips[ip] = content
+    print(ip, content)
     return content
 
 def in_area(ip, pro, city=''):
