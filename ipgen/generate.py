@@ -172,7 +172,8 @@ def gen(num: int, region='', city='', n_pre_region=20):
                     if _n >= 1000:
                         raise ValueError('not enough ip in {}--{}'.format(start, end))
                     new = start.rand_between(end)
-                ips.append()
+                ips.append(new)
                 cnt += 1
+    check.update_cached()
     return ips
     
