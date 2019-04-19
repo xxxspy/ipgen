@@ -10,6 +10,7 @@ from .models import IP
 from .settings import PROS
 import hashlib
 import linecache
+from . import check
 
 
 
@@ -131,7 +132,7 @@ def load_points():
 
     
 
-def gen(num: int, region='', city='', n_pre_region=5):
+def gen(num: int, region='', city='', n_pre_region=20):
     '''
     region: 省名称
     city: 城市名称
@@ -141,6 +142,8 @@ def gen(num: int, region='', city='', n_pre_region=5):
     ips = []
     count = 0
     points = load_points()
+    print('ip: ', region, city)
+    filterd = []
     while len(ips) < num:
         count += 1
         if count > 100000:
@@ -148,26 +151,28 @@ def gen(num: int, region='', city='', n_pre_region=5):
         if not region:
             pro = random.choice(PROS)
         else:
+            assert region in PROS
             pro = region
         p = points[pro] + random.randint(1, 5)
         found = False
         # ID	StartIPNum	StartIPText	EndIPNum	EndIPText	Country	Local
         loop_cnt = 0
-        while not found:
-            loop_cnt += 1
-            if loop_cnt >= 200000:
-                raise ValueError('Can not find ip in {} {}'.format(region, city))
-            p += 1
-            line =  linecache.getline(str(paths.ip_db), p)
-            if pro in line and city in line:
-                info = line.split('\t')
-                if info[5].startswith(pro) and city in info[5]:
-                    break
-        start = IP.from_str(info[2])
-        end = IP.from_str(info[4])
-        cnt = 0
-        while len(ips) < num and cnt < n_pre_region:
-            ips.append(start.rand_between(end))
-            cnt += 1         
+        line =  linecache.getline(str(paths.ipdir / pro), count)
+        info = line.split('\t')
+        if info[0].startswith(pro) and city in info[0] and info[1]!=info[2] and info[1] not in filterd:
+            start = IP.from_str(info[1])
+            end = IP.from_str(info[2])
+            print(start, end)
+            cnt = 0
+            while (check.in_area(start, pro, city)) and len(ips) < num and cnt < n_pre_region:
+                new = start.rand_between(end)
+                _n = 0
+                while new in ips:
+                    _n += 1
+                    if _n >= 1000:
+                        raise ValueError('not enough ip in {}--{}'.format(start, end))
+                    new = start.rand_between(end)
+                ips.append()
+                cnt += 1
     return ips
     
