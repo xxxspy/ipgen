@@ -55,15 +55,15 @@ class Test(unittest.TestCase):
     #     r = generate.random_city_ips(citi, 10)
     #     print(r)
 
-    def test_gen(self):
-        ips = generate.gen(1000, '河北省')
-        check.update_cached()
-        self.assertEqual(len(ips), 1000)
-        ips = generate.gen(1000)
-        self.assertEqual(len(ips), 1000)
-        ips = generate.gen(1000, region='河北省', city='石家庄', n_pre_region=50)
-        self.assertEqual(1000, len(ips))
-        check.update_cached()
+    # def test_gen(self):
+    #     ips = generate.gen(1000, '河北省')
+    #     check.update_cached()
+    #     self.assertEqual(len(ips), 1000)
+    #     ips = generate.gen(1000)
+    #     self.assertEqual(len(ips), 1000)
+    #     ips = generate.gen(1000, region='河北省', city='石家庄', n_pre_region=50)
+    #     self.assertEqual(1000, len(ips))
+    #     check.update_cached()
 
     # def test_split_ips(self):
     #     '''把ip按照省份切分'''
@@ -90,6 +90,15 @@ class Test(unittest.TestCase):
     #                 writer.write('{}\t{}\t{}\n'.format(info[5], info[2], info[4]))
     #     for file in files.values():
     #         file.close()
+
+    def test_sample_between(self):
+        ip = IP(1,2,1,1)
+        end = IP(1,2,1,200)
+        ips = ip.sample_between(end, 100)
+        print(len(ips))
+        ips = ip.sample_between(end, 1000)
+        print(len(ips))
+        # print(ips)
 
 
                 

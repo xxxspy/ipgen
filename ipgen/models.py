@@ -63,6 +63,8 @@ class IP:
             self.ip2 = 0
             self.ip3 = 0
             self.ip4 = 0
+        else:
+            raise ValueError
         self._info = None
         return self
 
@@ -114,12 +116,28 @@ class IP:
         self.save()
 
     def rand_between(self, ip: 'IP')->'IP':
+        assert ip > self
         i1 = random.randint(min(self.ip1, ip.ip1), max(self.ip1, ip.ip1))
         i2 = random.randint(min(self.ip2, ip.ip2), max(self.ip2, ip.ip2))
         i3 = random.randint(min(self.ip3, ip.ip3), max(self.ip3, ip.ip3))
         i4 = random.randint(min(self.ip4, ip.ip4), max(self.ip4, ip.ip4))
         ip = IP(i1, i2, i3, i4)
         return ip
+
+    def sample_between(self, ip: 'IP', n: int)->list:
+        assert ip > self
+        rtn = []
+        temp = self
+        for _ in range(n*3):
+            for _ in range(random.randint(1, 2)):
+                temp = temp.copy().next()
+            if temp < ip:
+                rtn.append(temp)
+            else:
+                break
+            if len(rtn) >= n:
+                break
+        return rtn
 
     def expand(self, num=10):
         start = IP(self.ip1, self.ip2, 0, 0)
