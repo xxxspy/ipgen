@@ -7,7 +7,7 @@ import random
 import time
 from . import cache
 from .models import IP
-from .settings import PROS
+from .settings import PROS, BLACK_IPS
 import hashlib
 import linecache
 from . import check
@@ -160,6 +160,13 @@ def gen(num: int, region='', city='', n_pre_region=20):
         line =  linecache.getline(str(paths.ipdir / pro), count)
         info = line.split('\t')
         if info[0].startswith(pro) and city in info[0] and info[1]!=info[2] and info[1] not in filterd:
+            invalid = False
+            for bip in BLACK_IPS:
+                if info[1].startswith(bip) or info[2].startswith(bip):
+                    invalid = True
+                    break
+            if invalid:
+                continue
             start = IP.from_str(info[1])
             end = IP.from_str(info[2])
             ips.extend(start.sample_between(end, n_pre_region))
