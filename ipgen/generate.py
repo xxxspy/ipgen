@@ -132,7 +132,7 @@ def load_points():
 
     
 
-def gen(num: int, region='', city='', n_pre_region=20):
+def gen(num: int, region='', city='', n_region=20):
     '''
     region: 省名称
     city: 城市名称
@@ -147,6 +147,8 @@ def gen(num: int, region='', city='', n_pre_region=20):
     while len(ips) < num:
         count += 1
         if count > 100000:
+            print('已经获取ip:', len(ips))
+            print(ips)
             raise ValueError('Reach Loop max count!')
         if not region:
             pro = random.choice(PROS)
@@ -169,7 +171,8 @@ def gen(num: int, region='', city='', n_pre_region=20):
                 continue
             start = IP.from_str(info[1])
             end = IP.from_str(info[2])
-            ips.extend(start.sample_between(end, n_pre_region))
+            nper = n_region * 2 if region else n_region # 如果指定了省, 我们可以多取一些重复地区 
+            ips.extend(start.sample_between(end, nper))
     check.update_cached()
     return ips
     
