@@ -155,10 +155,10 @@ def gen(num: int, region='', city='', n_region=20):
         else:
             assert region in PROS
             pro = region
-        p = points[pro] + random.randint(1, 5)
-        found = False
+        # p = points[pro] + random.randint(1, 5)
+        # found = False
         # ID	StartIPNum	StartIPText	EndIPNum	EndIPText	Country	Local
-        loop_cnt = 0
+        # loop_cnt = 0
         line =  linecache.getline(str(paths.ipdir / pro), count)
         info = line.split('\t')
         if info[0].startswith(pro) and city in info[0] and info[1]!=info[2] and info[1] not in filterd:
