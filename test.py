@@ -70,6 +70,7 @@ class Test(unittest.TestCase):
         files = {}
         dirpath = paths.PROJECT / 'ip'
         for pro in settings.PROS:
+            print(pro)
             if pro in files:
                 f = files[pro]
             else:

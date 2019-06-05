@@ -130,7 +130,19 @@ def load_points():
             raise ValueError('Not fond province {}'.format(pro))
     return points
 
-    
+
+def quick_gen(num: int):
+    '''快速产生ip, 从样本库里直接获取的'''
+    f = open(str(paths.dirty_ips), 'r', encoding='utf8')
+    rtn = []
+    for i in range(num):
+        ip = f.readline().strip()
+        if ip:
+            rtn.append(ip)
+    while len(rtn) < num:
+        rtn.append(random.choice(rtn))
+    f.close()
+    return rtn
 
 def gen(num: int, region='', city='', n_region=20):
     '''
@@ -141,8 +153,6 @@ def gen(num: int, region='', city='', n_region=20):
         city = ''
     ips = []
     count = 0
-    points = load_points()
-    print('ip: ', region, city)
     filterd = []
     while len(ips) < num:
         count += 1
