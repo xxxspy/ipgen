@@ -144,6 +144,17 @@ def quick_gen(num: int):
     f.close()
     return rtn
 
+def load_ips_from_file(n: int, fname: paths.Path, line_num=100):
+    from ipaddress import IPv4Address
+    lines = []
+    with open(str(fname), 'r', encoding='utf8') as f:
+        for i, line in enumerate(f):
+            if line:
+                lines.append(line)
+            if i >= line_num:
+                break
+    
+
 def gen(num: int, region='', city='', n_region=20):
     '''
     region: 省名称
@@ -157,7 +168,7 @@ def gen(num: int, region='', city='', n_region=20):
     while len(ips) < num:
         count += 1
         if count > 100000:
-            print('已经获取ip:', len(ips))
+            print('已经获取ip:', len(ips), '需要ip:', num)
             print(ips)
             raise ValueError('Reach Loop max count!')
         if not region:
@@ -181,7 +192,7 @@ def gen(num: int, region='', city='', n_region=20):
                 continue
             start = IP.from_str(info[1])
             end = IP.from_str(info[2])
-            nper = n_region * 2 if region else n_region # 如果指定了省, 我们可以多取一些重复地区 
+            nper = n_region * 4 if region else n_region # 如果指定了省, 我们可以多取一些重复地区 
             ips.extend(start.sample_between(end, nper))
     check.update_cached()
     return ips
